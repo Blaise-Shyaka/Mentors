@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Blaise-Shyaka/Mentors.svg?branch=develop)](https://travis-ci.org/Blaise-Shyaka/Mentors) [![Coverage Status](https://coveralls.io/repos/github/Blaise-Shyaka/Mentors/badge.svg?branch=develop)](https://coveralls.io/github/Blaise-Shyaka/Mentors?branch=develop)
+[![Build Status](https://travis-ci.org/Blaise-Shyaka/Mentors.svg?branch=develop)](https://travis-ci.org/Blaise-Shyaka/Mentors) [![Coverage Status](https://coveralls.io/repos/github/Blaise-Shyaka/Mentors/badge.svg?branch=ft-user-signup-api-endpoint-%23171408793)](https://coveralls.io/github/Blaise-Shyaka/Mentors?branch=ft-user-signup-api-endpoint-%23171408793)
 
 # Mentors
 
