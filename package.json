@@ -5,8 +5,12 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon --exec babel-node ./server/app.js",
-    "test": "mocha --require @babel/register ./server/tests/ --exit",
-    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
+    "test": "nyc mocha --require @babel/register ./server/tests/ --exit",
+    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
+    "clean": "rm -rf build && mkdir build",
+    "build-babel": "babel -d ./build ./server -s",
+    "build": "npm run clean && npm run build-babel",
+    "start": "npm run build && node ./build/app.js"
   },
   "repository": {
     "type": "git",
