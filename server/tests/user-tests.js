@@ -51,4 +51,28 @@ describe('User signup POST /auth/signup', () => {
       });
     done();
   });
+
+  it('should return status 400 and an object with status, error properties', done => {
+    chai
+      .request(app)
+      .post('/api/v1/user/auth/signup')
+      .send({
+        first_name: 'Hirwa',
+        last_name: 'Firmin',
+        email: 'change@gmail.com',
+        address: 'New York',
+        password: 'hirwapassword'
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.statusCode.should.equal(codes.badRequest);
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'error']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.badRequest);
+        res.body.error.should.be.a('string');
+      });
+    done();
+  });
 });
