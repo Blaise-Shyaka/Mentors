@@ -100,3 +100,77 @@ describe('User signup', () => {
     done();
   });
 });
+
+describe('User sign in', () => {
+  it('should return status 201 and "status", "message" and "data" properties', done => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/signin')
+      .send({ email: 'carljenkinson@gmail.com', password: 'carlpassword' })
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'message', 'data']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.okay);
+        res.body.message.should.be.a('string');
+        res.body.message.should.equal(messages.successfulLogin);
+        res.body.data.should.be.a('object');
+        res.body.data.should.include.keys(['token']);
+      });
+    done();
+  });
+
+  it('should return status 400, if the user submits incomplete information', done => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/signin')
+      .send({ email: 'carljenkinson@gmail.com' })
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'error']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.badRequest);
+        res.body.error.should.be.a('string');
+      });
+    done();
+  });
+
+  it('should return status 401, in case the user does not exist', done => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/signin')
+      .send({ email: 'carl@gmail.com', password: 'password' })
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'error']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.unauthorized);
+        res.body.error.should.be.a('string');
+      });
+    done();
+  });
+
+  it('should return status 201 and "status", "message" and "data" properties', done => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/signin')
+      .send({ email: 'carljenkinson@gmail.com', password: 'wrongpassword' })
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'error']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.unauthorized);
+        res.body.error.should.be.a('string');
+        res.body.error.should.equal(messages.wrongEmailOrPassword);
+      });
+    done();
+  });
+});
