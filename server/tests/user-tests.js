@@ -139,7 +139,7 @@ describe('User sign in', () => {
     done();
   });
 
-  it('should return status 401, if the user does not exist', done => {
+  it('should return status 401, in case the user does not exist', done => {
     chai
       .request(app)
       .post('/api/v1/auth/signin')
