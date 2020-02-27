@@ -6,20 +6,19 @@ import { codes, messages } from '../utils/messages-codes';
 
 const { should } = chai;
 should();
-
 chai.use(chaiHttp);
 
 /* global describe, it */
 
-describe('User signup POST /auth/signup', () => {
-  it('should return status 201 and an object with status, message and data as properties', done => {
+describe('User signup', () => {
+  it('should return status code 201', done => {
     chai
       .request(app)
-      .post('/api/v1/user/auth/signup')
+      .post('/api/v1/auth/signup')
       .send({
         first_name: 'Hirwa',
         last_name: 'Firmin',
-        email: 'change6@gmail.com',
+        email: 'hirwafirmin@gmail.com',
         address: 'New York',
         password: 'hirwapassword',
         bio: 'I also have a bio',
@@ -29,7 +28,6 @@ describe('User signup POST /auth/signup', () => {
       .end((err, res) => {
         if (err) return done(err);
 
-        res.statusCode.should.equal(codes.resourceCreated);
         res.body.should.be.a('object');
         res.body.should.include.keys(['status', 'message', 'data']);
         res.body.status.should.be.a('number');
@@ -52,26 +50,52 @@ describe('User signup POST /auth/signup', () => {
     done();
   });
 
-  it('should return status 400 and an object with status, error properties', done => {
+  it('should return status code 400, if a user does not fill all the required fields', done => {
     chai
       .request(app)
-      .post('/api/v1/user/auth/signup')
+      .post('/api/v1/auth/signup')
       .send({
         first_name: 'Hirwa',
         last_name: 'Firmin',
-        email: 'change@gmail.com',
+        email: 'hirwafirmin@gmail.com',
         address: 'New York',
         password: 'hirwapassword'
       })
       .end((err, res) => {
         if (err) return done(err);
 
-        res.statusCode.should.equal(codes.badRequest);
         res.body.should.be.a('object');
         res.body.should.include.keys(['status', 'error']);
         res.body.status.should.be.a('number');
         res.body.status.should.equal(codes.badRequest);
         res.body.error.should.be.a('string');
+      });
+    done();
+  });
+
+  it('should return status code 409, if a user already has an account', done => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/signup')
+      .send({
+        first_name: 'Carl',
+        last_name: 'Jenkinson',
+        email: 'carljenkinson@gmail.com',
+        address: 'New York',
+        password: 'carlpassword',
+        bio: 'Carl has a bio',
+        occupation: 'Software developer',
+        expertise: 'software development'
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'error']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.conflict);
+        res.body.error.should.be.a('string');
+        res.body.error.should.be.equal(messages.signinInstead);
       });
     done();
   });
