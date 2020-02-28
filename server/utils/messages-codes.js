@@ -11,7 +11,11 @@ const messages = {
   userCreatedSuccessfully: 'New user was created successfully',
   userDoesntExist: 'You do not have an account on Mentors. Sign up instead!',
   wrongEmailOrPassword: 'Sign in failed. Email and password do not match',
-  successfulLogin: 'You were logged in successfully!'
+  successfulLogin: 'You were logged in successfully!',
+  noToken: 'Access denied! No token was provided',
+  noMentors: 'There are no mentors! Try again some other time',
+  accessDeniedToMentors: 'Access to this resource is denied to all the mentors',
+  success: 'Operation completed successfully'
 };
 
 export { codes, messages };

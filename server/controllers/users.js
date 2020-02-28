@@ -1,9 +1,9 @@
 /* eslint-disable consistent-return */
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import validate from '../helpers/validate-input';
 import { codes, messages } from '../utils/messages-codes';
 import users from '../data/users';
+import generateToken from '../helpers/generate-token';
 
 // The User sign up route controller function
 export const userSignUp = async (req, res) => {
@@ -88,7 +88,7 @@ export const userSignIn = async (req, res) => {
       .json({ status: res.statusCode, error: messages.wrongEmailOrPassword });
 
   // Generate and assign token to header
-  const token = await jwt.sign(userExists, process.env.secret_key);
+  const token = await generateToken(userExists);
   return res
     .header('Authorization', token)
     .status(codes.okay)
@@ -97,4 +97,26 @@ export const userSignIn = async (req, res) => {
       message: messages.successfulLogin,
       data: { token }
     });
+};
+
+export const viewAllMentors = (req, res) => {
+  // Details of a signed in user
+  const { user } = req;
+
+  // Check if a user trying to access this resource is a mentor and deny them access
+  if (user.is_mentor)
+    return res
+      .status(codes.unauthorized)
+      .json({ status: res.statusCode, error: messages.accessDeniedToMentors });
+
+  // Retrieve all mentors
+  const mentors = users.filter(individual => individual.is_mentor === true);
+  if (mentors.length === 0)
+    return res
+      .status(codes.okay)
+      .json({ status: res.statusCode, error: messages.noMentors });
+
+  return res
+    .status(codes.okay)
+    .json({ status: res.statusCode, message: messages.success, data: mentors });
 };
