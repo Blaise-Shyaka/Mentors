@@ -113,10 +113,36 @@ export const viewAllMentors = (req, res) => {
   const mentors = users.filter(individual => individual.is_mentor === true);
   if (mentors.length === 0)
     return res
-      .status(codes.okay)
-      .json({ status: res.statusCode, error: messages.noMentors });
+      .status(codes.notFound)
+      .json({ status: res.statusCode, error: messages.resourceNotFound });
 
   return res
     .status(codes.okay)
     .json({ status: res.statusCode, message: messages.success, data: mentors });
+};
+
+export const viewSpecificMentor = (req, res) => {
+  const { user } = req;
+  const { mentorId } = req.params;
+
+  // Check if a user trying to access this resource is a mentor and deny them access
+  if (user.is_mentor)
+    return res
+      .status(codes.unauthorized)
+      .json({ status: res.statusCode, error: messages.accessDeniedToMentors });
+
+  // Retrieve mentor
+  const mentor = users.find(
+    individual =>
+      individual.id === parseInt(mentorId, 10) && individual.is_mentor
+  );
+
+  if (!mentor)
+    return res
+      .status(codes.notFound)
+      .json({ status: res.statusCode, error: messages.resourceNotFound });
+
+  return res
+    .status(codes.okay)
+    .json({ status: res.statusCode, message: messages.success, data: mentor });
 };

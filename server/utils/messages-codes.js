@@ -3,7 +3,8 @@ const codes = {
   conflict: 409,
   resourceCreated: 201,
   unauthorized: 401,
-  okay: 200
+  okay: 200,
+  notFound: 404
 };
 
 const messages = {
@@ -13,9 +14,9 @@ const messages = {
   wrongEmailOrPassword: 'Sign in failed. Email and password do not match',
   successfulLogin: 'You were logged in successfully!',
   noToken: 'Access denied! No token was provided',
-  noMentors: 'There are no mentors! Try again some other time',
   accessDeniedToMentors: 'Access to this resource is denied to all the mentors',
-  success: 'Operation completed successfully'
+  success: 'Operation completed successfully',
+  resourceNotFound: 'The resource you are trying to access was not found'
 };
 
 export { codes, messages };
