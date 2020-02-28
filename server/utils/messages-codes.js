@@ -16,7 +16,8 @@ const messages = {
   noToken: 'Access denied! No token was provided',
   accessDeniedToMentors: 'Access to this resource is denied to all the mentors',
   success: 'Operation completed successfully',
-  resourceNotFound: 'The resource you are trying to access was not found'
+  resourceNotFound: 'The resource you are trying to access was not found',
+  noMentor: 'The mentor you are sending a request to does not exist'
 };
 
 export { codes, messages };

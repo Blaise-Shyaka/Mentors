@@ -46,6 +46,16 @@ const validate = {
     });
 
     return schema.validate(data);
+  },
+
+  validateAnnouncement: data => {
+    const schema = Joi.object({
+      mentorId: Joi.number().required(),
+      title: Joi.string().required(),
+      questions: Joi.string().required()
+    });
+
+    return schema.validate(data);
   }
 };
 
