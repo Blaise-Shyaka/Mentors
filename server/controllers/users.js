@@ -1,9 +1,11 @@
 /* eslint-disable consistent-return */
 import bcrypt from 'bcrypt';
+import moment from 'moment';
 import validate from '../helpers/validate-input';
 import { codes, messages } from '../utils/messages-codes';
 import users from '../data/users';
 import generateToken from '../helpers/generate-token';
+import sessions from '../data/sessions';
 
 // The User sign up route controller function
 export const userSignUp = async (req, res) => {
@@ -145,4 +147,61 @@ export const viewSpecificMentor = (req, res) => {
   return res
     .status(codes.okay)
     .json({ status: res.statusCode, message: messages.success, data: mentor });
+};
+
+export const createMentorshipSession = (req, res) => {
+  const { user } = req;
+  const { error, value } = validate.validateAnnouncement(req.body);
+
+  // Check if the user is neither a mentor nor an admin
+  if (user.is_admin || user.is_mentor)
+    return res.status(codes.unauthorized).json({
+      status: res.statusCode,
+      error: messages.accessDeniedToMentors
+    });
+
+  // Validate user input
+  if (error)
+    return res
+      .status(codes.badRequest)
+      .json({ status: res.statusCode, error: error.message });
+
+  const { mentorId, title, questions } = value;
+
+  // Verify if the mentor exists
+  const mentor = users.find(
+    individual => individual.id === mentorId && individual.is_mentor
+  );
+  if (!mentor)
+    return res
+      .status(codes.notFound)
+      .json({ status: res.statusCode, error: messages.noMentor });
+
+  const createdOn = moment().format('LLL');
+
+  sessions.push({
+    id: sessions.length + 1,
+    mentorId,
+    menteeId: user.id,
+    menteeEmail: user.email,
+    title,
+    questions,
+    status: 'pending',
+    createdOn
+  });
+
+  return res.status(codes.okay).json({
+    status: codes.okay,
+    message: messages.success,
+    data: {
+      id: sessions.length,
+      mentorId,
+      menteeId: user.id,
+      menteeEmail: user.email,
+      title,
+      questions,
+      status: 'pending',
+      createdOn
+    }
+  });
 };
