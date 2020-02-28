@@ -3,6 +3,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../app';
 import { codes, messages } from '../utils/messages-codes';
+import generateToken from '../helpers/generate-token';
 
 const { should } = chai;
 should();
@@ -102,7 +103,7 @@ describe('User signup', () => {
 });
 
 describe('User sign in', () => {
-  it('should return status 201 and "status", "message" and "data" properties', done => {
+  it('should return status 200 and "status", "message" and "data" properties', done => {
     chai
       .request(app)
       .post('/api/v1/auth/signin')
@@ -156,7 +157,7 @@ describe('User sign in', () => {
     done();
   });
 
-  it('should return status 201 and "status", "message" and "data" properties', done => {
+  it('should return status 401 in case a user provides a wrong password', done => {
     chai
       .request(app)
       .post('/api/v1/auth/signin')
@@ -170,6 +171,81 @@ describe('User sign in', () => {
         res.body.status.should.equal(codes.unauthorized);
         res.body.error.should.be.a('string');
         res.body.error.should.equal(messages.wrongEmailOrPassword);
+      });
+    done();
+  });
+});
+
+describe('View all mentors', () => {
+  const rightToken = generateToken({
+    email: 'carljenkinson@gmail.com',
+    password: 'carlpassword'
+  });
+
+  const mentorToken = generateToken({
+    id: 2,
+    first_name: 'Ola',
+    last_name: 'fiona',
+    email: 'olafiona@gmail.com',
+    password: '$2b$10$kFjxy2DAFvutTJnYAaKj.eMPGapPWfViyZeQPRJplYEYhidC6hTT6',
+    address: 'Lagos',
+    bio: 'Ola has a bio',
+    occupation: 'Real estate developer',
+    expertise: 'construction',
+    is_admin: false,
+    is_mentor: true
+  });
+
+  it('should return status 200 and an object with "status", "message" and "data" properties', done => {
+    chai
+      .request(app)
+      .get('/api/v1/mentors')
+      .set('Authorization', rightToken)
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'message', 'data']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.okay);
+        res.body.message.should.be.a('string');
+        res.body.message.should.equal(messages.success);
+        res.body.data.should.be.a('array');
+      });
+    done();
+  });
+
+  it('should return status 401 if no token was provided', done => {
+    chai
+      .request(app)
+      .get('/api/v1/mentors')
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'error']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.unauthorized);
+        res.body.error.should.be.a('string');
+        res.body.error.should.equal(messages.noToken);
+      });
+    done();
+  });
+
+  it('should return status 401 if the user is a mentor', done => {
+    chai
+      .request(app)
+      .get('/api/v1/mentors')
+      .set('Authorization', mentorToken)
+      .end((err, res) => {
+        if (err) return done(err);
+
+        res.body.should.be.a('object');
+        res.body.should.include.keys(['status', 'error']);
+        res.body.status.should.be.a('number');
+        res.body.status.should.equal(codes.unauthorized);
+        res.body.error.should.be.a('string');
+        res.body.error.should.equal(messages.accessDeniedToMentors);
       });
     done();
   });

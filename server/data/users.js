@@ -11,6 +11,19 @@ const users = [
     expertise: 'software development',
     is_admin: false,
     is_mentor: false
+  },
+  {
+    id: 2,
+    first_name: 'Ola',
+    last_name: 'fiona',
+    email: 'olafiona@gmail.com',
+    password: '$2b$10$kFjxy2DAFvutTJnYAaKj.eMPGapPWfViyZeQPRJplYEYhidC6hTT6',
+    address: 'Lagos',
+    bio: 'Ola has a bio',
+    occupation: 'Real estate developer',
+    expertise: 'construction',
+    is_admin: false,
+    is_mentor: true
   }
 ];
 
