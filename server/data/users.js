@@ -24,6 +24,19 @@ const users = [
     expertise: 'construction',
     is_admin: false,
     is_mentor: true
+  },
+  {
+    id: 3,
+    first_name: 'Craig',
+    last_name: 'David',
+    email: 'craigdavid@gmail.com',
+    password: '$2b$10$wZ7WbSGj9uNO5TS4VHxdp.D2sSThPRbcsHVWqumcwRgjMleRVVRIK',
+    address: 'Las Vegas',
+    bio: 'Craig has a bio',
+    occupation: 'Musician',
+    expertise: 'Music',
+    is_admin: false,
+    is_mentor: true
   }
 ];
 

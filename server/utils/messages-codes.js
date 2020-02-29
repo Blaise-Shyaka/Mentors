@@ -17,7 +17,11 @@ const messages = {
   accessDeniedToMentors: 'Access to this resource is denied to all the mentors',
   success: 'Operation completed successfully',
   resourceNotFound: 'The resource you are trying to access was not found',
-  noMentor: 'The mentor you are sending a request to does not exist'
+  noMentor: 'The mentor you are sending a request to does not exist',
+  accessDeniedToRegularUsers:
+    'Access to this resource is denied to regular users',
+  sessionNotFound: 'The session you are trying to access was not found',
+  sessionNotYours: 'Access denied! This session belongs to another mentor'
 };
 
 export { codes, messages };
