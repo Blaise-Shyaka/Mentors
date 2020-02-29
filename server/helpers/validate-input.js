@@ -56,6 +56,14 @@ const validate = {
     });
 
     return schema.validate(data);
+  },
+
+  validateMentorResponse: data => {
+    const schema = Joi.object({
+      response: Joi.string().required()
+    });
+
+    return schema.validate(data);
   }
 };
 
