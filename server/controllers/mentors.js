@@ -5,7 +5,7 @@ import { codes, messages } from '../utils/messages-codes';
 import sessions from '../data/sessions';
 import validate from '../helpers/validate-input';
 
-const acceptMentorship = (req, res) => {
+export const acceptMentorship = (req, res) => {
   const { sessionId } = req.params;
   const { user } = req;
   const { error, value } = validate.validateMentorResponse(req.body);
@@ -36,7 +36,7 @@ const acceptMentorship = (req, res) => {
       .status(codes.unauthorized)
       .json({ status: res.statusCode, error: messages.sessionNotYours });
 
-  const respondedOn = moment().format('LLL');
+  const acceptedOn = moment().format('LLL');
 
   // Update session and send response
   return res.status(codes.okay).json({
@@ -52,9 +52,51 @@ const acceptMentorship = (req, res) => {
       status: 'accepted',
       createdOn: session.createdOn,
       response: value.response,
-      respondedOn
+      acceptedOn
     }
   });
 };
 
-export default acceptMentorship;
+export const rejectMentorship = (req, res) => {
+  const { sessionId } = req.params;
+  const { user } = req;
+
+  // Check if the user accessing this route is a mentor
+  if (!isMentor(user))
+    return res.status(codes.unauthorized).json({
+      status: res.statusCode,
+      error: messages.accessDeniedToRegularUsers
+    });
+
+  // Retrieve the session to be updated
+  const session = sessions.find(s => s.id === parseInt(sessionId, 10));
+  if (!session)
+    return res
+      .status(codes.notFound)
+      .json({ status: res.statusCode, error: messages.sessionNotFound });
+
+  // Deny access to the session, if the session retrieved does not belong to the signed in mentor
+  if (user.id !== session.mentorId)
+    return res
+      .status(codes.unauthorized)
+      .json({ status: res.statusCode, error: messages.sessionNotYours });
+
+  const rejectedOn = moment().format('LLL');
+
+  // Update session and send response
+  return res.status(codes.okay).json({
+    status: codes.okay,
+    message: messages.success,
+    data: {
+      id: sessionId,
+      mentorId: user.id,
+      menteeId: session.menteeId,
+      menteeEmail: session.menteeEmail,
+      title: session.title,
+      questions: session.questions,
+      status: 'rejected',
+      createdOn: session.createdOn,
+      rejectedOn
+    }
+  });
+};
